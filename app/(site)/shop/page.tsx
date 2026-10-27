@@ -33,10 +33,23 @@ export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState("All")
   const listingRef = useRef<HTMLDivElement>(null)
 
-  const filteredProducts =
+  const [search, setSearch] = useState("");
+
+  const filteredProducts = PRODUCTS.filter((product) => {
+    const matchesCategory = activeCategory === "All" || product.category === activeCategory;
+
+    const matchesSearch = product.name.toLowerCase().includes(search.trim().toLowerCase());
+
+    return matchesCategory && matchesSearch;
+
+  });
+
+  /*const filteredProducts =
     activeCategory === "All"
       ? PRODUCTS
-      : PRODUCTS.filter((p) => p.category === activeCategory)
+      : PRODUCTS.filter((p) => p.category === activeCategory)*/
+
+
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -99,6 +112,31 @@ export default function ShopPage() {
         />
       </div>
       <div ref={listingRef} className="scroll-mt-24">
+        <div className="flex justify-center w-full">
+          <div className="search-container">
+            <span className="material-symbols-outlined">search</span>
+            <input
+              type="text"
+              placeholder="Buscar productos"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+            {search && (
+              <button
+                className="clear-search"
+                type="button"
+                onClick={() => setSearch("")}
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+
+            )}
+
+          </div>
+        </div>
+
+
+
         <ProductListing
           products={filteredProducts}
           title={
